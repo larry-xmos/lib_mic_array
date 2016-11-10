@@ -218,7 +218,16 @@ pdm_rx_4ch_loop:
 
 	ldd a, b, p[0]
 	std a, b, p[1]
-	bl pdm_rx_4ch_loop
+#ifdef MIC_ARRAY_PDM_USER
+        stw r1, sp[14]
+        // not saving:
+        // r0 - temporary variable
+        // r2 - second channel unused in 4-channel loop
+        // r3 - will be set in next iteration
+        bl pdm_user
+        ldw r1, sp[14]
+#endif
+	bu pdm_rx_4ch_loop
 //2604ns per loop
 	.align 8
 pdm_rx_8ch_loop:
